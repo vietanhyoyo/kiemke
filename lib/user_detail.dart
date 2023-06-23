@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:kiemke/add_property.dart';
 import 'package:kiemke/provider/user_list_provider.dart';
-import 'package:kiemke/user_detail.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatelessWidget {
+class UserDetailScreen extends StatelessWidget {
   late UserListProvider userListProvider;
   late SharedPreferences prefs;
 
   Future<void> initSharedPreferences(BuildContext context) async {
     prefs = await SharedPreferences.getInstance();
-    userListProvider =
-        Provider.of<UserListProvider>(context, listen: false);
-    userListProvider.loadUserList(prefs.getStringList('userList'));
+    userListProvider = Provider.of<UserListProvider>(context, listen: false);
   }
 
   Future<void> saveUserList() async {
     final jsonList =
-    userListProvider.userList.map((user) => jsonEncode(user)).toList();
+        userListProvider.userList.map((user) => jsonEncode(user)).toList();
     await prefs.setStringList('userList', jsonList);
   }
 
@@ -79,7 +77,7 @@ class HomeScreen extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('User List'),
+              title: Text('User'),
             ),
             body: Center(
               child: CircularProgressIndicator(),
@@ -88,71 +86,66 @@ class HomeScreen extends StatelessWidget {
         } else {
           return Scaffold(
             appBar: AppBar(
-              title: Text('User List'),
+              title: Text('User ${userListProvider.userID.toString()}'),
             ),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Consumer<UserListProvider>(
                 builder: (context, userListProvider, _) {
                   return ListView.builder(
-                    itemCount: userListProvider.userList.length,
+                    itemCount: userListProvider
+                        .userList[userListProvider.userID]["properties"].length,
                     itemBuilder: (context, index) {
                       return Card(
-                        child: ListTile(
-                          title: Text(userListProvider.userList[index]["name"]),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                onPressed: () {
-                                  showEditUserDialog(context, index);
-                                },
-                                icon: Icon(Icons.edit),
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('Xác nhận'),
-                                        content: Text('Bạn có chắc muốn xóa hộ này?'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.of(context).pop(); // Close the dialog
-                                            },
-                                            child: Text('Hủy'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              // Perform the delete operation
-                                              userListProvider.deleteUser(index);
-                                              Navigator.of(context).pop(); // Close the dialog
-                                            },
-                                            child: Text('Xóa'),
-                                          ),
-                                        ],
+                        child: Column(
+                          children: [
+                            ListTile(
+                              title: Text(userListProvider.userList[userListProvider.userID]["properties"][index]["code"]),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: Text('Xác nhận'),
+                                            content: Text(
+                                                'Bạn có chắc muốn xóa tài sản này?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(); // Close the dialog
+                                                },
+                                                child: Text('Hủy'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context)
+                                                      .pop(); // Close the dialog
+                                                },
+                                                child: Text('Xóa'),
+                                              ),
+                                            ],
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                                icon: Icon(Icons.delete),
+                                    icon: Icon(Icons.delete),
+                                  ),
+                                ],
                               ),
-                              IconButton(
-                                onPressed: () {
-                                  userListProvider.editUserID(index);
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) => UserDetailScreen(),
-                                  ));
-                                },
-                                icon: Icon(Icons.change_circle),
-                              ),
-                            ],
-                          ),
-                          onTap: () {
-                            // Xử lý sự kiện khi người dùng nhấn vào một n
-                          },
+                              onTap: () {
+                                // Xử lý sự kiện khi người dùng nhấn vào một n
+                              },
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Text(userListProvider.userList[userListProvider.userID]["properties"][index]["name"]),
+                            ),
+                          ],
                         ),
                       );
                     },
@@ -162,7 +155,9 @@ class HomeScreen extends StatelessWidget {
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
-                showEditUserDialog(context, null);
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => AddPropertyScreen(),
+                ));
               },
               child: Icon(Icons.add),
             ),
