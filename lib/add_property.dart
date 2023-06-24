@@ -97,7 +97,7 @@ class AddPropertyScreenState extends State<AddPropertyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text('Tài sản'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -111,7 +111,7 @@ class AddPropertyScreenState extends State<AddPropertyScreen> {
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Enter something...',
+                hintText: 'Nhập loại tài sản...',
               ),
             ),
             SizedBox(height: 16.0),
@@ -119,7 +119,7 @@ class AddPropertyScreenState extends State<AddPropertyScreen> {
                 onPressed: () {
                   searchString(dataList, inputValue);
                 },
-                child: Text('Search')),
+                child: Text('Tìm kiếm')),
             Expanded(
               child: ListView.builder(
                 itemCount: resultList.length,
@@ -133,7 +133,7 @@ class AddPropertyScreenState extends State<AddPropertyScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(resultList[index]['code']),
+                              Text(resultList[index]['code'], style: TextStyle(fontWeight: FontWeight.bold),),
                               Container(
                                 width: 30,
                                 height: 30,
@@ -145,7 +145,7 @@ class AddPropertyScreenState extends State<AddPropertyScreen> {
                                       builder: (context) => UserDetailScreen(),
                                     ));
                                   },
-                                  icon: Icon(Icons.add),
+                                  icon: Icon(Icons.add, color: Colors.blue,),
                                 ),
                               )
                             ],

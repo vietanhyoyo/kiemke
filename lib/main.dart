@@ -17,10 +17,10 @@ class MyApp extends StatelessWidget {
         create: (_) => UserListProvider(),
         builder: (context, _) {
           return MaterialApp(
+              debugShowCheckedModeBanner: false,
               title: 'Flutter Demo',
               theme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-                useMaterial3: true,
               ),
               home: HomeScreen());
         });
